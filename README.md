@@ -1,13 +1,12 @@
-# ECS CNAME v0.1.0
+# ECS DNS v0.1.0
 
 [![PyPI](https://img.shields.io/pypi/v/ecs-dns}.svg)](https://pypi.python.org/pypi/ecs-dns)
 
-Creates a Route 53 CNAME for ECS tasks which are assigned a public IP.
+Creates a Route 53 multi-value A record for ECS tasks which are assigned a public IP.
 
 ## Features
 
-* Create a dedicated CNAME
-* Add an IP to a round-robin DNS record
+* Create a new A record in a multi-value set
 
 ## Usage
 

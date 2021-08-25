@@ -32,7 +32,7 @@ from ecs_dns import (
     type=click.STRING,
     help="Protocol for the healthcheck to use.",
 )
-def main(dns_name: str, container_name: str, port: int, protocol: str):
+def cli(dns_name: str, container_name: str, port: int, protocol: str):
     """Automatically determine the desired container's public IP and create a Route53 multi-
     value A record and healthcheck for it.
 
@@ -46,4 +46,4 @@ def main(dns_name: str, container_name: str, port: int, protocol: str):
 
 
 if __name__ == "__main__":
-    sys.exit(main())  # pragma: no cover
+    sys.exit(cli())  # pragma: no cover

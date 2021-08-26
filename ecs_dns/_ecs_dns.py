@@ -54,7 +54,8 @@ def create_dns_record(public_ip: str, dns_name: str, healthcheck_id: str):
     client = boto3.client("route53")
 
     # set identifiers are used in multi-value record sets to uniquely id a record
-    set_identifier = hashlib.md5(f"{public_ip}/{dns_name}")
+    hash_str = f"{public_ip}/{dns_name}".encode("utf-8")
+    set_identifier = hashlib.md5(hash_str).hexdigest()
 
     record_set = {
         "Name": dns_name,
@@ -106,7 +107,9 @@ def create_health_check(
     client = boto3.client("route53")
     # caller reference is a unique string that identifies the request and that allows you to retry a failed
     # CreateHealthCheck request without the risk of creating two identical health checks
-    caller_reference = hashlib.md5(f"{public_ip}/{dns_name}")
+    hash_str = f"{public_ip}/{dns_name}".encode("utf-8")
+    caller_reference = hashlib.md5(hash_str).hexdigest()
+
     response = client.create_health_check(
         CallerReference=caller_reference,
         HealthCheckConfig={
@@ -116,7 +119,6 @@ def create_health_check(
             "ResourcePath": path,
             "RequestInterval": interval,
             "FailureThreshold": failure_threshold,
-            "Regions": ["us-east-1"],
         },
     )
     return response["HealthCheck"]["Id"]

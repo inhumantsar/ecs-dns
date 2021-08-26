@@ -12,10 +12,10 @@ from pathlib import Path
 import boto3
 import responses
 
-from moto import mock_ec2
+from moto import mock_ec2, mock_route53
 
 from ecs_dns import find_private_ips, find_public_ips, METADATA_URL
-from ecs_dns._ecs_dns import _get_network_info
+from ecs_dns._ecs_dns import _get_network_info, create_dns_record, create_health_check
 from tests.mock_data import read_mock_metadata, MOCK_DNI_PRIVATE_IP
 
 
@@ -72,3 +72,27 @@ def test_get_network_info(aws_credentials):
     found_dns = list(_get_network_info(MOCK_DNI_PRIVATE_IP, "PublicDnsName"))[0]
     assert expected_ip == found_ip
     assert expected_dns == found_dns
+
+
+@mock_route53
+def test_create_dns_record(aws_credentials):
+    """Test creating route53 change set."""
+    test_zone = "test.dns"
+    test_dns_name = f"foo.{test_zone}"
+    test_ip = "55.55.55.55"
+    test_healthcheck = "12345678913245798"
+
+    client = boto3.client("route53", region_name="us-east-1")
+    zone = client.create_hosted_zone(Name=test_zone, CallerReference="moo")
+    create_dns_record(test_ip, test_dns_name, test_healthcheck)
+
+
+@mock_route53
+def test_create_healthcheck(aws_credentials):
+    """Test creating route53 healthcheck."""
+    test_zone = "test.dns"
+    test_dns_name = f"foo.{test_zone}"
+    test_ip = "55.55.55.55"
+
+    client = boto3.client("route53", region_name="us-east-1")
+    create_health_check(test_ip, test_dns_name)

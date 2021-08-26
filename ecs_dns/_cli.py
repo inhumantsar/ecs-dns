@@ -40,7 +40,7 @@ def cli(dns_name: str, container_name: str, port: int, protocol: str):
     public IPs, only the first will be used.
     """
     public_ip_groups = [find_public_ips(ip) for ip in find_private_ips(container_name)]
-    public_ips = set([i for group in public_ip_groups for i in group])
+    public_ips = list(set([i for group in public_ip_groups for i in group]))
     ip = public_ips[0]
     healthcheck = create_health_check(ip, dns_name, port, protocol)
     create_dns_record(ip, dns_name, healthcheck)

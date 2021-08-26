@@ -5,9 +5,9 @@ import json
 import logging
 import os
 from typing import Dict, Generator, List
-import requests
 
 import boto3
+import requests
 
 from ecs_dns import METADATA_URL
 from ecs_dns.models import ECSTaskMetadata
@@ -21,7 +21,7 @@ def find_private_ips(container_name=None) -> Generator[str, None, None]:
     raw_metadata = requests.get(METADATA_URL).text
     log.debug(f"Got metadata: {raw_metadata}")
 
-    metadata = ECSTaskMetadata.from_dict(json.loads(raw_metadata))
+    metadata = ECSTaskMetadata(**json.loads(raw_metadata))
     for container in metadata.Containers:
         if container_name and container_name != container.Name:
             continue
@@ -30,9 +30,7 @@ def find_private_ips(container_name=None) -> Generator[str, None, None]:
 
 
 def _get_network_info(private_ip: str, result_key: str) -> Generator[str, None, None]:
-    """Accept a private IP address and yield the value associated with
-    `result_key` from each NetworkInterface's Association object.
-    """
+    """Accept a private IP and yield the `result_key` value from each NetworkInterface's Association object."""
     client = boto3.client("ec2")
     filters = [{"Name": "addresses.private-ip-address", "Values": [private_ip]}]
     response = client.describe_network_interfaces(Filters=filters)

@@ -14,11 +14,21 @@ def test_command_line_interface():
     runner = CliRunner()
 
     # test no args
-    result = runner.invoke(_cli.main)
-    assert result.exit_code == 0
-    assert "ecs_dns._cli.main" in result.output
+    result = runner.invoke(_cli.cli)
+    assert result.exit_code == 2
+    assert "Error: Missing argument 'DNS_NAME'" in result.output
 
     # test help command
-    help_result = runner.invoke(_cli.main, ["--help"])
+    help_result = runner.invoke(_cli.cli, ["--help"])
     assert help_result.exit_code == 0
-    assert "--help  Show this message and exit." in help_result.output
+    expected_args = [
+        "-c, --container-name TEXT",
+        "Container name to create a record for.",
+        "-p, --port INTEGER",
+        "Port for the healthcheck to query.",
+        "--protocol TEXT",
+        "Protocol for the healthcheck to use.",
+        "--help",
+        "Show this message and exit.",
+    ]
+    assert all(arg in help_result.output for arg in expected_args)

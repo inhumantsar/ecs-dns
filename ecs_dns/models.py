@@ -1,18 +1,25 @@
 """Data models for ECS CNAME."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from typing import Dict, List
 
 
-@dataclass(order=True)
+@dataclass(init=False, order=True)
 class ECSNetworkMetadata:
     """ECS container network metadata."""
 
     NetworkMode: str
     IPv4Addresses: List[str]
 
+    # doing this because AWS sends us keys we super don't care about
+    def __init__(self, **kwargs):  # noqa: D107
+        keys = set([field.name for field in fields(self)])
+        for k, v in kwargs.items():
+            if k in keys:
+                setattr(self, k, v)
 
-@dataclass(order=True)
+
+@dataclass(init=False, order=True)
 class ECSContainerMetadata:
     """ECS container metadata."""
 
@@ -30,12 +37,17 @@ class ECSContainerMetadata:
     Type: str
     Networks: List[ECSNetworkMetadata]
 
-    def from_dict(source: Dict):
-        source["Networks"] = [ECSNetworkMetadata(**c) for c in source["Networks"]]
-        return ECSContainerMetadata(**source)
+    # doing this because AWS sends us keys we super don't care about
+    def __init__(self, **kwargs):  # noqa: D107
+        keys = set([field.name for field in fields(self)])
+        for k, v in kwargs.items():
+            if k == "Networks":
+                setattr(self, k, [ECSNetworkMetadata(**network) for network in v])
+            elif k in keys:
+                setattr(self, k, v)
 
 
-@dataclass(order=True)
+@dataclass(init=False, order=True)
 class ECSTaskMetadata:
     """ECS task metadata response object."""
 
@@ -50,8 +62,11 @@ class ECSTaskMetadata:
     PullStoppedAt: str
     AvailabilityZone: str
 
-    def from_dict(source: Dict):
-        source["Containers"] = [
-            ECSContainerMetadata.from_dict(c) for c in source["Containers"]
-        ]
-        return ECSTaskMetadata(**source)
+    # doing this because AWS sends us keys we super don't care about
+    def __init__(self, **kwargs):  # noqa: D107
+        keys = set([field.name for field in fields(self)])
+        for k, v in kwargs.items():
+            if k == "Containers":
+                setattr(self, k, [ECSContainerMetadata(**container) for container in v])
+            elif k in keys:
+                setattr(self, k, v)

@@ -1,12 +1,13 @@
 """Console script for ECS CNAME."""
 import sys
+
 import click
 
 from ecs_dns import (
-    find_private_ips,
-    find_public_ips,
     create_health_check,
     create_dns_record,
+    find_private_ips,
+    find_public_ips,
 )
 
 
@@ -33,11 +34,10 @@ from ecs_dns import (
     help="Protocol for the healthcheck to use.",
 )
 def cli(dns_name: str, container_name: str, port: int, protocol: str):
-    """Automatically determine the desired container's public IP and create a Route53 multi-
-    value A record and healthcheck for it.
+    """Automatically determine a container's public IP and create a multi-value A record and healthcheck for it.
 
-    If multiple containers with public IPs are found, or if one container has multiple public IPs,
-    only the first will be used.
+    If multiple containers with public IPs are found, or if one container has multiple
+    public IPs, only the first will be used.
     """
     ip_addresses = set([find_public_ips(ip) for ip in find_private_ips(container_name)])
     ip = ip_addresses[0]

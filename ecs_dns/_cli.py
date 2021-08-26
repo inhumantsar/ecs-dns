@@ -39,8 +39,9 @@ def cli(dns_name: str, container_name: str, port: int, protocol: str):
     If multiple containers with public IPs are found, or if one container has multiple
     public IPs, only the first will be used.
     """
-    ip_addresses = set([find_public_ips(ip) for ip in find_private_ips(container_name)])
-    ip = ip_addresses[0]
+    public_ip_groups = [find_public_ips(ip) for ip in find_private_ips(container_name)]
+    public_ips = set([i for i in public_ip_groups])
+    ip = public_ips[0]
     healthcheck = create_health_check(ip, dns_name, port, protocol)
     create_dns_record(ip, dns_name, healthcheck)
 

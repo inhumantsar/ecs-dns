@@ -1,4 +1,4 @@
-# ECS DNS v0.1.11
+# ECS DNS v0.1.12
 
 [![PyPI](https://img.shields.io/pypi/v/ecs-dns}.svg)](https://pypi.python.org/pypi/ecs-dns)
 

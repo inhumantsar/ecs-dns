@@ -55,8 +55,8 @@ def find_public_ips(private_ip: str) -> List[str]:
     return list(_get_network_info(private_ip, "PublicIp"))
 
 
-def create_dns_record(public_ip: str, dns_name: str, healthcheck_id: str):
-    """Create a Route53 multi-value A record with healthcheck."""
+def create_dns_record(public_ip: str, dns_name: str, healthcheck_id: str = None):
+    """Create a Route53 multi-value A record, optionally with healthcheck."""
     client = boto3.client("route53")
 
     # set identifiers are used in multi-value record sets to uniquely id a record
@@ -73,8 +73,10 @@ def create_dns_record(public_ip: str, dns_name: str, healthcheck_id: str):
         "ResourceRecords": [
             {"Value": public_ip},
         ],
-        "HealthCheckId": healthcheck_id,
     }
+
+    if healthcheck_id:
+        record_set["HealthCheckId"] = healthcheck_id
 
     # get the domain's hosted zone id
     zone_name = ".".join(dns_name.split(".")[-2:])

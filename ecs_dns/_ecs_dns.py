@@ -116,7 +116,7 @@ def create_health_check(
             "IPAddress": public_ip,
             "Port": port,
             "Type": protocol,
-            "ResourcePath": path,
+            "ResourcePath": path if protocol.startswith("HTTP") else None,
             "RequestInterval": interval,
             "FailureThreshold": failure_threshold,
         },

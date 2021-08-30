@@ -4,7 +4,7 @@
 
 __author__ = """Shaun Martin"""
 __email__ = "inhumantsar@protonmail.com"
-__version__ = "0.1.8"
+__version__ = "0.1.9"
 
 METADATA_URL = "http://169.254.170.2/v2/metadata/"
 

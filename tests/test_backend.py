@@ -44,6 +44,7 @@ def test_metadata_parse():
 @mock_ec2
 def test_get_network_info(aws_credentials):
     """Test parsing boto3 response."""
+    ### Public IP
     # using a dummy ec2 instance since the describe network interfaces call
     # works the same way with fargate
     client = boto3.client("ec2", region_name="us-east-1")

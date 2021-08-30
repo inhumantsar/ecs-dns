@@ -30,13 +30,19 @@ def find_private_ips(container_name=None) -> Generator[str, None, None]:
 
 
 def _get_network_info(private_ip: str, result_key: str) -> Generator[str, None, None]:
-    """Accept a private IP and yield the `result_key` value from each NetworkInterface's Association object."""
+    """Accept a private IP and yield the `result_key` value from each NetworkInterface's Association object.
+
+    NOTE: If there is no public IP associated with the private IP, the private IP is yielded as a fallback.
+    """
     client = boto3.client("ec2")
     filters = [{"Name": "addresses.private-ip-address", "Values": [private_ip]}]
     response = client.describe_network_interfaces(Filters=filters)
     log.debug(f"_get_network_info response: {response}")
     for interface in response["NetworkInterfaces"]:
-        yield interface["Association"][result_key]
+        if "Association" in list(interface.keys()):
+            yield interface["Association"][result_key]
+        else:
+            yield interface["PrivateIpAddress"]
 
 
 def find_public_dns_names(private_ip: str) -> List[str]:

@@ -1,8 +1,8 @@
-# ECS DNS v0.1.10
+# ECS DNS v0.1.11
 
 [![PyPI](https://img.shields.io/pypi/v/ecs-dns}.svg)](https://pypi.python.org/pypi/ecs-dns)
 
-Creates a Route 53 multi-value A record for ECS tasks which are assigned a public IP.
+Creates a Route 53 multi-value A record for ECS tasks using the appropriate public IP (default) or private IP (fallback when no public IP exists).
 
 ## Features
 

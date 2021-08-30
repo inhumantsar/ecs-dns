@@ -6,7 +6,7 @@ from pathlib import Path
 from setuptools import find_packages, setup
 
 GITHUB_URL = "https://github.com/inhumantsar/ecs-dns"
-VERSION = "0.1.10"
+VERSION = "0.1.11"
 
 
 def read(fname):

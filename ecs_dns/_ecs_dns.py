@@ -110,15 +110,17 @@ def create_health_check(
     hash_str = f"{public_ip}/{dns_name}".encode("utf-8")
     caller_reference = hashlib.md5(hash_str).hexdigest()
 
+    config = {
+        "IPAddress": public_ip,
+        "Port": port,
+        "Type": protocol,
+        "RequestInterval": interval,
+        "FailureThreshold": failure_threshold,
+    }
+    if protocol.startswith("HTTP"):
+        config["ResourcePath"] = path
+
     response = client.create_health_check(
-        CallerReference=caller_reference,
-        HealthCheckConfig={
-            "IPAddress": public_ip,
-            "Port": port,
-            "Type": protocol,
-            "ResourcePath": path if protocol.startswith("HTTP") else None,
-            "RequestInterval": interval,
-            "FailureThreshold": failure_threshold,
-        },
+        CallerReference=caller_reference, HealthCheckConfig=config
     )
     return response["HealthCheck"]["Id"]

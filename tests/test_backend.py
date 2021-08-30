@@ -96,3 +96,9 @@ def test_create_healthcheck(aws_credentials):
 
     client = boto3.client("route53", region_name="us-east-1")
     create_health_check(test_ip, test_dns_name)
+    test_zone = "test.dns"
+    test_dns_name = f"foo.{test_zone}"
+    test_ip = "55.55.55.55"
+
+    client = boto3.client("route53", region_name="us-east-1")
+    create_health_check(test_ip, test_dns_name, protocol="TCP")
